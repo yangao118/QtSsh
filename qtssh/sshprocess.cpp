@@ -133,15 +133,37 @@ void SshProcess::sshDataReceived()
                 setChannelState(ChannelState::Close);
                 sshDataReceived();
                 return;
+            } else if (retsz == 0) {
+                /* we might have something to read from stderr */
+                retsz = libssh2_channel_read_stderr(m_sshChannel, buffer, 16 * 1024);
+
+                if (retsz == LIBSSH2_ERROR_EAGAIN)
+                    return;
+
+                if (retsz < 0) {
+                    if(!m_error)
+                    {
+                        m_error = true;
+                        emit failed();
+                        qCWarning(logsshprocess) << "Can't read result from stderr (" << sshErrorToString(static_cast<int>(retsz)) << ")";
+                    }
+                    setChannelState(ChannelState::Close);
+                    sshDataReceived();
+                    return;
+                }
             }
 
-            m_result.append(buffer, static_cast<int>(retsz));
+            if (retsz != 0)
+                m_result.append(buffer, static_cast<int>(retsz));
 
             if (libssh2_channel_eof(m_sshChannel) == 1)
             {
                 qCDebug(logsshprocess) << "runCommand(" << m_cmd << ") RESULT: " << m_result;
                 setChannelState(Close);
                 emit finished();
+            } else {
+                /* we are not done yet, do not fallthrough */
+                return;
             }
         }
 
