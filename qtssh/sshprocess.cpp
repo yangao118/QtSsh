@@ -37,6 +37,18 @@ void SshProcess::runCommand(const QString &cmd)
     sshDataReceived();
 }
 
+void SshProcess::runCommandSync(const QString &cmd)
+{
+    QEventLoop wait;
+
+    QObject::connect(this, &SshProcess::finished, &wait, &QEventLoop::quit);
+    QObject::connect(this, &SshProcess::failed, &wait, &QEventLoop::quit);
+
+    runCommand(cmd);
+
+    wait.exec();
+}
+
 void SshProcess::sshDataReceived()
 {
     qCDebug(logsshprocess) << "Channel "<< m_name << "State:" << channelState();

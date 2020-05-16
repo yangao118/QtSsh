@@ -24,6 +24,7 @@ public slots:
     void runCommand(const QString &cmd);
     void sshDataReceived() override;
 
+    void runCommandSync(const QString &cmd);
 
 
 
