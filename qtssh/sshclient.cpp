@@ -290,7 +290,7 @@ void SshClient::setName(const QString &name)
 }
 
 /* New implementation */
-const int ConnectionTimeout = 60000;
+const int ConnectionTimeout = 6000;
 
 
 
@@ -299,6 +299,7 @@ void SshClient::_connection_socketTimeout()
     m_socket.disconnectFromHost();
     qCWarning(sshclient) << m_name << ": ssh socket connection timeout";
     setSshState(SshState::Error);
+    m_connectionTimeout.stop();
     emit sshEvent();
 }
 
