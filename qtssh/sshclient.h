@@ -80,6 +80,7 @@ public:
     virtual ~SshClient();
 
     QString getName() const;
+    SshClient::SshState getState() const;
     bool takeChannelCreationMutex(void *identifier);
     void releaseChannelCreationMutex(void *identifier);
 

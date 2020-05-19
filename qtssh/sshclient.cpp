@@ -103,6 +103,11 @@ QString SshClient::getName() const
     return m_name;
 }
 
+SshClient::SshState SshClient::getState() const
+{
+    return m_sshState;
+}
+
 bool SshClient::takeChannelCreationMutex(void *identifier)
 {
     if ( ! channelCreationInProgress.tryLock() && currentLockerForChannelCreation != identifier )
