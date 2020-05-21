@@ -39,6 +39,7 @@ public:
     QString send(const QString &source, QString dest);
     bool get(const QString &source, QString dest, bool override = false);
     int mkdir(const QString &dest, int mode = 0755);
+    int rename(const QString &origin, const QString &newname);
     QStringList readdir(const QString &d);
     bool isDir(const QString &d);
     bool isFile(const QString &d);

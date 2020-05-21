@@ -8,6 +8,7 @@
 #include "sshsftpcommandget.h"
 #include "sshsftpcommandreaddir.h"
 #include "sshsftpcommandmkdir.h"
+#include "sshsftpcommandrename.h"
 #include "sshsftpcommandunlink.h"
 #include "sshsftpcommandfileinfo.h"
 
@@ -117,6 +118,16 @@ bool SshSFtp::get(const QString &source, QString dest, bool override)
         }
     }
     return true;
+}
+
+int SshSFtp::rename(const QString &origin, const QString &newname)
+{
+     SshSftpCommandRename cmd(origin, newname, *this);
+     DEBUGCH << "rename" << origin << "to" << newname << endl;
+     processCmd(&cmd);
+     DEBUGCH << "rename" << origin << "to" << newname << ((cmd.error())?("FAIL"):("OK"));
+     if(cmd.error()) return -1;
+     return 0;
 }
 
 int SshSFtp::mkdir(const QString &dest, int mode)
