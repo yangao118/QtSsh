@@ -302,6 +302,8 @@ bool SshSFtp::processCmd(SshSftpCommand *cmd)
     QObject::connect(this, &SshSFtp::stateChanged, &wait, &QEventLoop::quit);
     QObject::connect(this, &SshSFtp::cmdEvent, &wait, &QEventLoop::quit);
 
+    waitForState(ChannelState::Ready);
+
     m_cmd.push_back(cmd);
     emit sendEvent();
     while(channelState() == ChannelState::Ready && cmd->state() != SshSftpCommand::CommandState::Terminate && cmd->state() != SshSftpCommand::CommandState::Error)
