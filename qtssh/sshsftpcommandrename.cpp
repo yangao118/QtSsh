@@ -40,6 +40,7 @@ void SshSftpCommandRename::process()
             }
             m_error = true;
             qCWarning(logsshsftp) << "SFTP rename error " << res;
+            setState(CommandState::Error);
         }
         else
         {

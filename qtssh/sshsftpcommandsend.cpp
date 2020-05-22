@@ -70,6 +70,8 @@ void SshSftpCommandSend::process()
                         return;
                     }
                     qCWarning(logsshsftp) << "SFTP Write error " << rc;
+                    m_error = true;
+                    setState(CommandState::Closing);
                 }
                 m_nread -= rc;
                 m_begin += rc;

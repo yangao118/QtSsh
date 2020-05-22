@@ -41,7 +41,8 @@ void SshSftpCommandFileInfo::process()
                 return;
             }
             m_error = true;
-            qCWarning(logsshsftp) << "SFTP unlink error " << res;
+            qCWarning(logsshsftp) << "SFTP fileinfo error " << res;
+            setState(CommandState::Error);
         }
         else
         {

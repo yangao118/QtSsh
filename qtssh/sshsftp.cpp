@@ -10,6 +10,7 @@
 #include "sshsftpcommandmkdir.h"
 #include "sshsftpcommandrename.h"
 #include "sshsftpcommandunlink.h"
+#include "sshsftpcommandrmdir.h"
 #include "sshsftpcommandfileinfo.h"
 
 Q_LOGGING_CATEGORY(logsshsftp, "ssh.sftp", QtWarningMsg)
@@ -185,6 +186,16 @@ bool SshSFtp::unlink(const QString &d)
     DEBUGCH << "unlink(" << d << "," << d << ")";
     processCmd(&cmd);
     DEBUGCH << "unlink(" << d << ") = " << ((cmd.error())?("FAIL"):("OK"));
+    if(cmd.error()) return -1;
+    return 0;
+}
+
+bool SshSFtp::rmdir(const QString &d)
+{
+    SshSftpCommandRmDir cmd(d, *this);
+    DEBUGCH << "rmdir(" << d << "," << d << ")";
+    processCmd(&cmd);
+    DEBUGCH << "rmdir(" << d << ") = " << ((cmd.error())?("FAIL"):("OK"));
     if(cmd.error()) return -1;
     return 0;
 }

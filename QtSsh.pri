@@ -7,6 +7,7 @@ HEADERS += \
     $$PWD/qtssh/sshsftpcommandmkdir.h \
     $$PWD/qtssh/sshsftpcommandreaddir.h \
     $$PWD/qtssh/sshsftpcommandrename.h \
+    $$PWD/qtssh/sshsftpcommandrmdir.h \
     $$PWD/qtssh/sshsftpcommandsend.h \
     $$PWD/qtssh/sshsftpcommandunlink.h \
     $$PWD/qtssh/sshtunnelout.h \
@@ -32,6 +33,7 @@ SOURCES += \
     $$PWD/qtssh/sshsftpcommandrename.cpp \
     $$PWD/qtssh/sshsftpcommandsend.cpp \
     $$PWD/qtssh/sshsftpcommandunlink.cpp \
+    $$PWD/qtssh/sshsftpcommanrmdir.cpp \
     $$PWD/qtssh/sshtunnelout.cpp \
     $$PWD/qtssh/sshtunnelin.cpp \
     $$PWD/qtssh/sshprocess.cpp \

@@ -1,25 +1,25 @@
-#include "sshsftpcommandunlink.h"
+#include "sshsftpcommandrmdir.h"
 #include "sshclient.h"
 
-SshSftpCommandUnlink::SshSftpCommandUnlink(const QString &path, SshSFtp &parent)
+SshSftpCommandRmDir::SshSftpCommandRmDir(const QString &path, SshSFtp &parent)
     : SshSftpCommand(parent)
     , m_path(path)
 {
-    setName(QString("unlink(%1)").arg(path));
+    setName(QString("rmdir(%1)").arg(path));
 }
 
-bool SshSftpCommandUnlink::error() const
+bool SshSftpCommandRmDir::error() const
 {
     return m_error;
 }
 
-void SshSftpCommandUnlink::process()
+void SshSftpCommandRmDir::process()
 {
     int res;
     switch(m_state)
     {
     case Openning:
-        res = libssh2_sftp_unlink_ex(
+        res = libssh2_sftp_rmdir_ex(
                     sftp().getSftpSession(),
                     qPrintable(m_path),
                     static_cast<unsigned int>(m_path.size())
@@ -32,7 +32,7 @@ void SshSftpCommandUnlink::process()
                 return;
             }
             m_error = true;
-            qCWarning(logsshsftp) << "SFTP unlink error " << res;
+            qCWarning(logsshsftp) << "SFTP rmdir error " << res;
             setState(CommandState::Error);
         }
         else

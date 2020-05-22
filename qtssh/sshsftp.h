@@ -45,6 +45,7 @@ public:
     bool isFile(const QString &d);
     int mkpath(const QString &dest);
     bool unlink(const QString &d);
+    bool rmdir(const QString &d);
     quint64 filesize(const QString &d);
     LIBSSH2_SFTP_ATTRIBUTES getFileInfo(const QString &path);
 
