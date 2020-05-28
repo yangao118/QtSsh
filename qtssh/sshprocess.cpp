@@ -43,10 +43,22 @@ void SshProcess::runCommandSync(const QString &cmd)
 
     QObject::connect(this, &SshProcess::finished, &wait, &QEventLoop::quit);
     QObject::connect(this, &SshProcess::failed, &wait, &QEventLoop::quit);
+    QObject::connect(this->sshClient(), &SshClient::sshError, &wait, &QEventLoop::quit);
+    QObject::connect(this->sshClient(), &SshClient::sshDisconnected, &wait, &QEventLoop::quit);
 
     runCommand(cmd);
 
     wait.exec();
+
+    /* check whether we are waken up because the connection is lost */
+    if ((this->sshClient()->sshState() == SshClient::SshState::Error) ||
+            (this->sshClient()->sshState() == SshClient::SshState::Unconnected))
+    {
+        m_error = true;
+        emit failed();
+        setChannelState(ChannelState::Error);
+//        sshDataReceived();
+    }
 }
 
 void SshProcess::sshDataReceived()
