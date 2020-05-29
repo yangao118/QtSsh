@@ -40,15 +40,31 @@ void SshProcess::runCommand(const QString &cmd)
 void SshProcess::runCommandSync(const QString &cmd)
 {
     QEventLoop wait;
+    QTimer timeout;
 
     QObject::connect(this, &SshProcess::finished, &wait, &QEventLoop::quit);
     QObject::connect(this, &SshProcess::failed, &wait, &QEventLoop::quit);
     QObject::connect(this->sshClient(), &SshClient::sshError, &wait, &QEventLoop::quit);
     QObject::connect(this->sshClient(), &SshClient::sshDisconnected, &wait, &QEventLoop::quit);
+    QObject::connect(&timeout, &QTimer::timeout, &wait, &QEventLoop::quit);
+
+    timeout.setSingleShot(true);
 
     runCommand(cmd);
 
+    timeout.start(5000); /* 5 seconds */
+
     wait.exec();
+
+    if (timeout.isActive() == false) {
+        /* timeout */
+        m_error = true;
+        emit failed();
+        setChannelState(ChannelState::Error);
+//        sshDataReceived();
+        return;
+    }
+    timeout.stop();
 
     /* check whether we are waken up because the connection is lost */
     if ((this->sshClient()->sshState() == SshClient::SshState::Error) ||
