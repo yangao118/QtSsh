@@ -59,8 +59,8 @@ void SshProcess::runCommandSync(const QString &cmd)
     if (timeout.isActive() == false) {
         /* timeout */
         m_error = true;
-        emit failed();
-        setChannelState(ChannelState::Error);
+//        emit failed();
+//        setChannelState(ChannelState::Error);
 //        sshDataReceived();
         return;
     }
@@ -71,7 +71,7 @@ void SshProcess::runCommandSync(const QString &cmd)
             (this->sshClient()->sshState() == SshClient::SshState::Unconnected))
     {
         m_error = true;
-        emit failed();
+//        emit failed();
         setChannelState(ChannelState::Error);
 //        sshDataReceived();
     }
