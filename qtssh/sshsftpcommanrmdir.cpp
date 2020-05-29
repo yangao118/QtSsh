@@ -22,7 +22,7 @@ void SshSftpCommandRmDir::process()
         res = libssh2_sftp_rmdir_ex(
                     sftp().getSftpSession(),
                     qPrintable(m_path),
-                    static_cast<unsigned int>(m_path.size())
+                    static_cast<unsigned int>(m_path.toLocal8Bit().size())
                     );
 
         if(res < 0)

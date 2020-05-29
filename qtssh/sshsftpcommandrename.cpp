@@ -24,9 +24,9 @@ void SshSftpCommandRename::process()
         res = libssh2_sftp_rename_ex(
                     sftp().getSftpSession(),
                     qPrintable(m_origin),
-                    static_cast<unsigned int>(m_origin.size()),
+                    static_cast<unsigned int>(m_origin.toLocal8Bit().size()),
                     qPrintable(m_newname),
-                    static_cast<unsigned int>(m_newname.size()),
+                    static_cast<unsigned int>(m_newname.toLocal8Bit().size()),
                     LIBSSH2_SFTP_RENAME_OVERWRITE | \
                     LIBSSH2_SFTP_RENAME_ATOMIC | \
                     LIBSSH2_SFTP_RENAME_NATIVE

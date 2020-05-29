@@ -24,7 +24,7 @@ void SshSftpCommandMkdir::process()
         res = libssh2_sftp_mkdir_ex(
                     sftp().getSftpSession(),
                     qPrintable(m_dir),
-                    static_cast<unsigned int>(m_dir.size()),
+                    static_cast<unsigned int>(m_dir.toLocal8Bit().size()),
                     m_mode
                     );
 

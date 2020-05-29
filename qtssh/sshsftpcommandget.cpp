@@ -17,7 +17,7 @@ void SshSftpCommandGet::process()
         m_sftpfile = libssh2_sftp_open_ex(
                     sftp().getSftpSession(),
                     qPrintable(m_src),
-                    static_cast<unsigned int>(m_src.size()),
+                    static_cast<unsigned int>(m_src.toLocal8Bit().size()),
                     LIBSSH2_FXF_READ,
                     0,
                     LIBSSH2_SFTP_OPENFILE

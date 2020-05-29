@@ -102,7 +102,8 @@ void SshProcess::sshDataReceived()
                 return;
             }
             qCDebug(logsshprocess) << "runCommand(" << m_cmd << ")";
-            int ret = libssh2_channel_process_startup(m_sshChannel, "exec", sizeof("exec") - 1, m_cmd.toStdString().c_str(), static_cast<unsigned int>(m_cmd.size()));
+            int ret = libssh2_channel_process_startup(m_sshChannel, "exec", sizeof("exec") - 1,
+                                                      m_cmd.toLocal8Bit().data(), static_cast<unsigned int>(m_cmd.toLocal8Bit().size()));
             if (ret == LIBSSH2_ERROR_EAGAIN)
             {
                 return;

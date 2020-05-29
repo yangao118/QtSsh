@@ -17,7 +17,7 @@ void SshSftpCommandSend::process()
         m_sftpfile = libssh2_sftp_open_ex(
                     sftp().getSftpSession(),
                     qPrintable(m_dest),
-                    static_cast<unsigned int>(m_dest.size()),
+                    static_cast<unsigned int>(m_dest.toLocal8Bit().size()),
                     LIBSSH2_FXF_WRITE|LIBSSH2_FXF_CREAT|LIBSSH2_FXF_TRUNC,
                     LIBSSH2_SFTP_S_IRUSR|LIBSSH2_SFTP_S_IWUSR| LIBSSH2_SFTP_S_IRGRP|LIBSSH2_SFTP_S_IROTH,
                     LIBSSH2_SFTP_OPENFILE

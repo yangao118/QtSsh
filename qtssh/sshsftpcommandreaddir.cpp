@@ -21,7 +21,7 @@ void SshSftpCommandReadDir::process()
         m_sftpdir = libssh2_sftp_open_ex(
                     sftp().getSftpSession(),
                     qPrintable(m_dir),
-                    static_cast<unsigned int>(m_dir.size()),
+                    static_cast<unsigned int>(m_dir.toLocal8Bit().size()),
                     0,
                     0,
                     LIBSSH2_SFTP_OPENDIR
