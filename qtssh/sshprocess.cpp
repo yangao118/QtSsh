@@ -56,6 +56,12 @@ void SshProcess::runCommandSync(const QString &cmd)
 
     wait.exec();
 
+    QObject::disconnect(this, &SshProcess::finished, &wait, &QEventLoop::quit);
+    QObject::disconnect(this, &SshProcess::failed, &wait, &QEventLoop::quit);
+    QObject::disconnect(this->sshClient(), &SshClient::sshError, &wait, &QEventLoop::quit);
+    QObject::disconnect(this->sshClient(), &SshClient::sshDisconnected, &wait, &QEventLoop::quit);
+    QObject::disconnect(&timeout, &QTimer::timeout, &wait, &QEventLoop::quit);
+
     if (timeout.isActive() == false) {
         /* timeout */
         m_error = true;

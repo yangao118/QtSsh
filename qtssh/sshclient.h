@@ -96,6 +96,7 @@ public:
     template<typename T>
     T *getChannel(const QString &name)
     {
+#if 0
         for(SshChannel *ch: m_channels)
         {
             if(ch->name() == name)
@@ -107,6 +108,7 @@ public:
                 }
             }
         }
+#endif
 
         T *res = new T(name, this);
         m_channels.append(res);
