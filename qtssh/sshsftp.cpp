@@ -335,9 +335,9 @@ bool SshSFtp::processCmd(SshSftpCommand *cmd)
     return (cmd->state() == SshSftpCommand::CommandState::Terminate);
 }
 
-LIBSSH2_SFTP_ATTRIBUTES SshSFtp::getFileInfo(const QString &path)
+LIBSSH2_SFTP_ATTRIBUTES SshSFtp::getFileInfo(const QString &path, int update)
 {
-    if(!m_fileinfo.contains(path))
+    if(!m_fileinfo.contains(path) || update)
     {
         SshSftpCommandFileInfo cmd(path, *this);
         DEBUGCH << "fileinfo(" << path << ")";

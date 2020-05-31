@@ -47,7 +47,7 @@ public:
     bool unlink(const QString &d);
     bool rmdir(const QString &d);
     quint64 filesize(const QString &d);
-    LIBSSH2_SFTP_ATTRIBUTES getFileInfo(const QString &path);
+    LIBSSH2_SFTP_ATTRIBUTES getFileInfo(const QString &path, int update = 0);
 
     LIBSSH2_SFTP *getSftpSession() const;
     bool processCmd(SshSftpCommand *cmd);
