@@ -37,7 +37,7 @@ void SshProcess::runCommand(const QString &cmd)
     sshDataReceived();
 }
 
-void SshProcess::runCommandSync(const QString &cmd)
+void SshProcess::runCommandSync(const QString &cmd, int timeout_val)
 {
     QEventLoop wait;
     QTimer timeout;
@@ -52,7 +52,7 @@ void SshProcess::runCommandSync(const QString &cmd)
 
     runCommand(cmd);
 
-    timeout.start(5000); /* 5 seconds */
+    timeout.start(timeout_val); /* 5 seconds */
 
     wait.exec();
 
