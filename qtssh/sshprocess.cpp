@@ -49,10 +49,9 @@ void SshProcess::runCommandSync(const QString &cmd, int timeout_val)
     QObject::connect(&timeout, &QTimer::timeout, &wait, &QEventLoop::quit);
 
     timeout.setSingleShot(true);
+    timeout.start(timeout_val); /* 3 seconds */
 
     runCommand(cmd);
-
-    timeout.start(timeout_val); /* 5 seconds */
 
     wait.exec();
 
@@ -65,9 +64,7 @@ void SshProcess::runCommandSync(const QString &cmd, int timeout_val)
     if (timeout.isActive() == false) {
         /* timeout */
         m_error = true;
-//        emit failed();
-//        setChannelState(ChannelState::Error);
-//        sshDataReceived();
+        setChannelState(ChannelState::Error);
         return;
     }
     timeout.stop();
@@ -77,7 +74,6 @@ void SshProcess::runCommandSync(const QString &cmd, int timeout_val)
             (this->sshClient()->sshState() == SshClient::SshState::Unconnected))
     {
         m_error = true;
-//        emit failed();
         setChannelState(ChannelState::Error);
 //        sshDataReceived();
     }
@@ -138,7 +134,7 @@ void SshProcess::sshDataReceived()
                     emit failed();
                     qCWarning(logsshprocess) << "Failed to run command" << ret;
                 }
-                setChannelState(ChannelState::Close);
+                setChannelState(ChannelState::Error);
                 sshDataReceived();
                 return;
             }
@@ -165,7 +161,7 @@ void SshProcess::sshDataReceived()
                     emit failed();
                     qCWarning(logsshprocess) << "Can't read result (" << sshErrorToString(static_cast<int>(retsz)) << ")";
                 }
-                setChannelState(ChannelState::Close);
+                setChannelState(ChannelState::Error);
                 sshDataReceived();
                 return;
             } else if (retsz == 0) {
@@ -182,7 +178,7 @@ void SshProcess::sshDataReceived()
                         emit failed();
                         qCWarning(logsshprocess) << "Can't read result from stderr (" << sshErrorToString(static_cast<int>(retsz)) << ")";
                     }
-                    setChannelState(ChannelState::Close);
+                    setChannelState(ChannelState::Error);
                     sshDataReceived();
                     return;
                 }
@@ -194,15 +190,17 @@ void SshProcess::sshDataReceived()
             if (libssh2_channel_eof(m_sshChannel) == 1)
             {
                 qCDebug(logsshprocess) << "runCommand(" << m_cmd << ") RESULT: " << m_result;
-                setChannelState(Close);
+//                setChannelState(Close);
                 emit finished();
+                return;
             } else {
                 /* we are not done yet, do not fallthrough */
                 return;
             }
         }
 
-        FALLTHROUGH; case Close:
+        /* we have done with this channel */
+        case Close:
         {
             qCDebug(logsshprocess) << "closeChannel:" << m_name;
             int ret = libssh2_channel_close(m_sshChannel);
@@ -281,7 +279,11 @@ void SshProcess::sshDataReceived()
 
         case Error:
         {
-            emit failed();
+            if (!m_error) {
+                m_error = true;
+                emit failed();
+            }
+
             qCDebug(logsshprocess) << "Channel" << m_name << "is in error state";
             setChannelState(Free);
             sshDataReceived();
