@@ -72,6 +72,12 @@ void SshSftpCommandGet::process()
                 while(rc)
                 {
                     ssize_t wrc = m_fout.write(begin, rc);
+                    if (wrc < 0) {
+                        qCWarning(logsshsftp) << "local file write error " << wrc;
+                        m_error = true;
+                        setState(CommandState::Error);
+                        return;
+                    }
                     rc -= wrc;
                     begin += wrc;
                 }
