@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "sshchannel.h"
 #include <QSemaphore>
@@ -33,6 +33,8 @@ private:
     LIBSSH2_CHANNEL *m_sshChannel {nullptr};
     QByteArray m_result;
     bool m_error {false};
+    bool sync_inflight;
+    bool close_called;
 
 signals:
     void finished();

@@ -1,4 +1,4 @@
-#include "sshprocess.h"
+﻿#include "sshprocess.h"
 #include "sshclient.h"
 #include <QTimer>
 #include <QEventLoop>
@@ -7,6 +7,8 @@ Q_LOGGING_CATEGORY(logsshprocess, "ssh.process", QtWarningMsg)
 
 SshProcess::SshProcess(const QString &name, SshClient *client)
     : SshChannel(name, client)
+    , sync_inflight(false)
+    , close_called(false)
 {
 }
 
@@ -17,6 +19,11 @@ SshProcess::~SshProcess()
 
 void SshProcess::close()
 {
+    if (sync_inflight) {
+        qCWarning(logsshprocess) << "close() called while sync inflight:" << name() << endl;
+        close_called = true;
+        return;
+    }
     setChannelState(ChannelState::Close);
     sshDataReceived();
 }
@@ -42,6 +49,8 @@ void SshProcess::runCommandSync(const QString &cmd, int timeout_val)
     QEventLoop wait;
     QTimer timeout;
 
+    sync_inflight = true;
+
     QObject::connect(this, &SshProcess::finished, &wait, &QEventLoop::quit);
     QObject::connect(this, &SshProcess::failed, &wait, &QEventLoop::quit);
     QObject::connect(this->sshClient(), &SshClient::sshError, &wait, &QEventLoop::quit);
@@ -65,6 +74,9 @@ void SshProcess::runCommandSync(const QString &cmd, int timeout_val)
         /* timeout */
         m_error = true;
         setChannelState(ChannelState::Error);
+        sync_inflight = false;
+        if (close_called)
+            close();
         return;
     }
     timeout.stop();
@@ -77,6 +89,10 @@ void SshProcess::runCommandSync(const QString &cmd, int timeout_val)
         setChannelState(ChannelState::Error);
 //        sshDataReceived();
     }
+
+    sync_inflight = false;
+    if (close_called)
+        close();
 }
 
 void SshProcess::sshDataReceived()
